@@ -1,0 +1,24 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: postgres_user
+  password: postgres_pass
+
+development:
+  <<: *default
+  database: kitten_web_development
+  host: localhost
+  port: 5432
+
+test:
+  <<: *default
+  database: kitten_web_test
+  host: localhost
+  port: 5432
+
+production:
+  <<: *default
+  database: kitten_web_production
+  username: kitten_web
+  password: <%= ENV['KITTEN_WEB_DATABASE_PASSWORD'] %>
