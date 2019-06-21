@@ -21,7 +21,7 @@ jobs:
       - checkout
       - run:
           name: Install Bundler v2
-          command: gem install bundler
+          command: gem install bundler -v 2.0.1
       - restore_cache:
           keys:
             - kitten-web-bundle-v2-{{ checksum "Gemfile.lock" }}
