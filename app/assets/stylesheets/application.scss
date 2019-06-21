@@ -1,0 +1,26 @@
+::selection { background-color: #C3CFE2; }
+
+body {
+  width: 100%;
+	height: 100vh;
+  display: flex;
+  flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(to right, #FDFBFB, #EBEDEE 70%);
+}
+
+img {
+  width: 50vw;
+}
+
+.text {
+	text-transform: uppercase;
+	background: linear-gradient(to right, #d580b4 0%, #8075dd 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	font: {
+		size: 5vw;
+		family: sans-serif;
+	};
+}

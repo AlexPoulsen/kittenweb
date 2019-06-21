@@ -17,7 +17,8 @@ gem 'webpacker', '~> 4.0'
 
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
-  gem 'rspec-rails', '~> 3.8'
+  gem 'rails-controller-testing'
+  gem 'rspec-rails', '~> 4.0.0beta2'
   gem 'rubocop', '~> 0.71.0', require: false
   gem 'rubocop-rspec', require: false
 end
