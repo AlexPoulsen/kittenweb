@@ -1,0 +1,64 @@
+version: 2
+
+jobs:
+  build:
+    parallelism: 3
+    docker:
+      - image: circleci/ruby:2.6.3-node-browsers
+        environment:
+          BUNDLE_JOBS: "3"
+          BUNDLE_RETRY: "3"
+          BUNDLE_PATH: vendor/bundle
+          PGHOST: 127.0.0.1
+          PGUSER: postgres_user
+          RAILS_ENV: test
+      - image: circleci/postgres:latest
+        environment:
+          POSTGRES_USER: postgres_user
+          POSTGRES_DB: kitten_web
+          POSTGRES_PASSWORD: postgres_pass
+    steps:
+      - checkout
+      - run:
+          name: Install Bundler v2
+          command: gem install bundler
+      - restore_cache:
+          keys:
+            - kitten-web-bundle-v2-{{ checksum "Gemfile.lock" }}
+            - kitten-web-bundle-v2-
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+      - save_cache:
+          key: kitten-web-bundle-v2-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      - run:
+          name: Rubocop
+          command: bundle exec rubocop
+      - restore_cache:
+          keys:
+            - kitten-web-yarn-{{ checksum "yarn.lock" }}
+            - kitten-web-yarn-
+      - run:
+          name: Yarn Install
+          command: yarn install --cache-folder ~/.cache/yarn
+      - save_cache:
+          key: kitten-web-yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Database setup
+          command: bin/rails db:setup
+      - run:
+          name: Run rspec
+          command: |
+            bundle exec rspec --profile 10 \
+                              --out test_results/rspec.xml \
+                              --format progress \
+                              $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+      - store_test_results:
+          path: test_results
